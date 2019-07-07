@@ -1,0 +1,7 @@
+user_custom_form.user_custom_form:
+  path: 'user/custom/form'
+  defaults:
+    _form: '\Drupal\user_custom_form\Form\UserCustomForm'
+    _title: 'Account Access'
+  requirements:
+    _access: 'TRUE'

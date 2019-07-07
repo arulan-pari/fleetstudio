@@ -1,0 +1,52 @@
+<?php
+
+/**
+ * @file
+ * Contains user_custom_form.module.
+ */
+
+use Drupal\Core\Routing\RouteMatchInterface;
+use Drupal\node\NodeInterface;
+use Drupal\Core\Session\AccountInterface;
+use Drupal\Core\Access\AccessResult;
+
+/**
+ * Implements hook_help().
+ */
+function user_custom_form_help($route_name, RouteMatchInterface $route_match) {
+  switch ($route_name) {
+    // Main module help for the user_custom_form module.
+    case 'help.page.user_custom_form':
+      $output = '';
+      $output .= '<h3>' . t('About') . '</h3>';
+      $output .= '<p>' . t('This module is used to access the domain content.') . '</p>';
+      return $output;
+
+    default:
+  }
+}
+
+/**
+ * Implements hook_theme().
+ */
+function user_custom_form_theme() {
+  return [
+    'user_custom_form' => [
+      'render element' => 'form',
+    ],
+  ];
+}
+
+/**
+ * Implements hook_node_access().
+ */
+function user_custom_form_node_access(NodeInterface $node, $op, AccountInterface $account) {
+
+  if ($op == 'view') {
+    $request = \Drupal::request()->getSession();
+    $domain = $request->get('domain');
+    $alias = str_replace('/', '', \Drupal::service('path.alias_manager')->getAliasByPath('/node/' . $node->id()));
+
+    return (empty($domain) && ($alias != $domain)) ? AccessResult::forbidden() : AccessResult::neutral();
+  }
+}
